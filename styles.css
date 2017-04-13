@@ -1,6 +1,11 @@
+img {
+  max-width: 100%;
+}
+
 #app {
   width:80%;
   margin: 0 auto;
+  padding-top: 1rem;
 }
 
 .logo {
@@ -13,7 +18,7 @@
   text-align:center;
 }
 
-#products {
+#posts {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -21,12 +26,21 @@
 }
 
 
-.individual-product {
-  padding: 30px;
+.post {
+  margin: 5px;
+  padding: 10px;
+  border: solid 1px grey;
+}
+
+@media screen and (min-width: 501px){
+  .post {
+    max-width: 25%;
+  }
 }
 
 @media screen and (max-width: 500px) {
-  .individual-product {
+  .post {
+    width: 100%
   }
 }
 
