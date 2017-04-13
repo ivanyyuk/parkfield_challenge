@@ -3,7 +3,7 @@ img {
 }
 
 #app {
-  width:80%;
+  width:90%;
   margin: 0 auto;
   padding-top: 1rem;
 }
@@ -19,7 +19,7 @@ img {
 }
 
 #posts {
-  display: flex;
+  display: flex; 
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-around;
@@ -32,13 +32,19 @@ img {
   border: solid 1px grey;
 }
 
-@media screen and (min-width: 501px){
+@media screen and (min-width: 850px){
   .post {
     max-width: 25%;
   }
 }
 
-@media screen and (max-width: 500px) {
+@media screen and (min-width: 601px) and (max-width: 849px){
+  .post {
+    max-width: 41%;
+  }
+}
+
+@media screen and (max-width: 600px) {
   .post {
     width: 100%
   }
