@@ -1,0 +1,32 @@
+#app {
+  width:80%;
+  margin: 0 auto;
+}
+
+.logo {
+  background-color: black;
+  color:white;
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+  text-transform: uppercase;
+  width: 100%;
+  text-align:center;
+}
+
+#products {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+
+.individual-product {
+  padding: 30px;
+}
+
+@media screen and (max-width: 500px) {
+  .individual-product {
+  }
+}
+
