@@ -133,23 +133,13 @@ a:hover {
   color: grey;
 }
 
-@media screen and (min-width: 850px){
-  .post {
-    max-width: 25%;
-  }
-
-  .hamburger {
-    display: none;
-  }
-}
-
 @media screen and (max-width: 849px) {
   .header {
     height: 44px;
   }
   .filter{
     display:none;
-    margin-top: 2px;
+    margin-top: 1px;
   }
 
   .filter li {
@@ -165,7 +155,7 @@ a:hover {
   }
 }
 
-@media screen and (min-width: 601px) {
+@media screen and (min-width: 601px){
   .post {
     max-width: 41%;
   }
@@ -174,6 +164,16 @@ a:hover {
 @media screen and (max-width: 600px) {
   .post {
     width: 100%
+  }
+}
+
+@media screen and (min-width: 850px){
+  .post {
+    max-width: 25%;
+  }
+
+  .hamburger {
+    display: none;
   }
 }
 
