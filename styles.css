@@ -44,10 +44,20 @@ a:hover {
   z-index: 999;
 }
 
-.logo {
-  display:inline-block;
-  float: left;
-  padding-left: 10px;
+.hamburger {
+  background:none;
+  position:absolute;
+  top:0;
+  left:0;
+  line-height:45px;
+  padding:0px 0 0px 15px;
+  color:#FFDC00;
+  border:0;
+  font-size:1.4em;
+  font-weight:bold;
+  cursor:pointer;
+  outline:none;
+  z-index:10000000000000;
 }
 
 .filter {
@@ -69,9 +79,9 @@ a:hover {
 }
 
 .filter li:hover {
- background-color: #FFDC00; 
- color: #001F3F;
- cursor: pointer;
+  background-color: #FFDC00; 
+  color: #001F3F;
+  cursor: pointer;
 }
 
 #posts {
@@ -117,13 +127,45 @@ a:hover {
   margin-bottom: 6px;
 }
 
+.instagram-post {
+  text-align: center;
+  font-size: 14px;
+  color: grey;
+}
+
 @media screen and (min-width: 850px){
   .post {
     max-width: 25%;
   }
+
+  .hamburger {
+    display: none;
+  }
 }
 
-@media screen and (min-width: 601px) and (max-width: 849px){
+@media screen and (max-width: 849px) {
+  .header {
+    height: 44px;
+  }
+  .filter{
+    display:none;
+    margin-top: 2px;
+  }
+
+  .filter li {
+    background-color: #001F3F;
+    height: 22px;
+    padding:10px;
+  }
+
+  li.active  {
+    background-color: #FFDC00;
+    color: #001F3F;
+
+  }
+}
+
+@media screen and (min-width: 601px) {
   .post {
     max-width: 41%;
   }

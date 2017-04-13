@@ -1,5 +1,20 @@
 'use strict';
 
+
+//this prevents menu from being hidden when we chage the size of the page
+//because when we have a hamburger menu we use jquery toggle() that adds dispay:none property
+//and overrides our media queries
+$(window).on('resize',function(){
+    if($(this).width() > 849){
+        $('.filter').removeAttr('style');
+    }
+});
+
+/*
+ * START HELPER METHODS
+ *
+ *
+ */
 const loadPosts = function() {
   return axios.get('posts.json')
     .then(function (res) {
@@ -144,6 +159,15 @@ const removeOtherActiveClasses = function (id) {
   });
 };
 
+/*
+ *
+ *
+ * END HELPER METHODS
+ *
+ *
+ *
+ */
+
 $(function() {
   loadPosts()
     .then(function(data) {
@@ -162,6 +186,12 @@ $(function() {
             window.open(this.href, '_blank');
           });
         }
+      });
+
+      $('.hamburger').on('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        $('.filter').toggle();
       });
 
       //add click handlers to our filter
