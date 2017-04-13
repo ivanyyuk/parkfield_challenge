@@ -101,6 +101,48 @@ const createFromServiceName = function (name, postData) {
   }
 };
 
+const toggleFilter = function (id, isActive) {
+
+  //clear classes first
+  $('.hidden').removeClass('hidden');
+
+  //if filter was active all we need to do is clear classes and return
+  if (isActive) return;
+
+
+
+
+  
+  const classes = ['manual', 'twitter', 'instagram'];
+
+  //splice out the class we will show
+  classes.forEach(function(currentClass, i) {
+    if (currentClass === id) {
+      classes.splice(i,1);
+      return;
+    }
+  });
+
+
+  //our classes array will only have the classes to hide
+  classes.forEach(function(currentClass){
+    let classString = `.${currentClass}-post`;
+    $(classString).addClass('hidden');
+  });
+};
+
+const removeOtherActiveClasses = function (id) {
+
+  const ids = ['manual', 'twitter', 'instagram'];
+
+  //basically go through all other filter ids and remove
+  //active class if it exists
+  ids.forEach(function(currentId) {
+    if (id !== currentId) {
+      $(`#filter-${currentId}`).removeClass('active');
+    }
+  });
+};
 
 $(function() {
   loadPosts()
@@ -120,6 +162,30 @@ $(function() {
             window.open(this.href, '_blank');
           });
         }
+      });
+
+      //add click handlers to our filter
+      $('.filter li').each(function() {
+        $(this).on('click',
+          function() {
+            //get the name of posts we want to show
+            //id is filter-manual filter-twitter etc.
+            //so we only want the second word
+            let id = $(this).attr('id').split('-')[1];
+
+            //now we check if the filter is already active
+            //and pass that to our filter function
+            let isActive = $(this).hasClass('active');
+
+            //remove all other active classes
+            removeOtherActiveClasses(id);
+
+            //toggle the class
+            $(this).toggleClass('active');
+
+            //then we filter the posts
+            toggleFilter(id, isActive);
+          });
       });
     });
 });
