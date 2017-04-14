@@ -1,6 +1,5 @@
 'use strict';
 
-
 //this prevents menu from being hidden when we chage the size of the page
 //because when we have a hamburger menu we use jquery toggle() that adds dispay:none property
 //and overrides our media queries
@@ -23,27 +22,114 @@ const loadPosts = function() {
     .catch(console.error);
 };
 
+const loadAndAttachPosts = function () {
+  return loadPosts()
+    .then(function(data) {
+      $.each(data.items, function(key, val){
+        let post = createFromServiceName(val.service_name, val.item_data);
+        $(post).appendTo('#posts');
+      });
+    });
+};
+
+//this function has to be a little different so we can retain 
+//any current filter
+//we load posts, attach them then if there is a filter
+//we remove all filters and re activate that same filter
+const loadMorePosts = function() {
+  const activeFilter = $('.active').attr('id');
+  return loadAndAttachPosts()
+    .then(function() {
+      if (activeFilter){
+        let id = activeFilter.split('-')[1];
+        removeOtherActiveClasses();
+        $(`#${activeFilter}`).toggleClass('active');
+        toggleFilter(id, false);
+      }
+    });
+};
+
+const addClickHandlers = function (){
+  $('.hamburger').on('click', function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    $('.filter').toggle();
+  });
+
+  $('.filter li').each(function() {
+    $(this).on('click',
+      function() {
+        //get the name of posts we want to show
+        //id is filter-manual filter-twitter etc.
+        //so we only want the second word
+        let id = $(this).attr('id').split('-')[1];
+
+        //now we check if the filter is already active
+        //and pass that to our filter function
+        let isActive = $(this).hasClass('active');
+
+        //remove all other active classes
+        removeOtherActiveClasses(id);
+
+        //toggle the class
+        $(this).toggleClass('active');
+
+        //then we filter the posts
+        toggleFilter(id, isActive);
+      });
+  });
+
+  //this activated our load more posts link to load posts and open all
+  //new links in new windows
+  $('#load-link').on('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    loadMorePosts().then(linksInNewWindow);
+  });
+};
+
+
+const linksInNewWindow = function () {
+  $('a').each(function() {
+    var a = new RegExp('/' + window.location.host + '/');
+    if(!a.test(this.href)) {
+      $(this).click(function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        window.open(this.href, '_blank');
+      });
+    }
+  });
+};
+
+
+
+//this is for manual posts because the link string had unnecessary expace characters
 const replaceEscapeCharacters = function (str) {
   return str.replace(/\\/g, '');
 };
 
+//used in parseLinksAndHashTags
 const addAnchorToUrl = function (str) {
   return `<a href='${str}'>${str}</a>`;
 };
 
+//used in parseLinksandHastags
 const addAnchorToAtMention = function (str) {
   return `<a href='https://twitter.com/${str}'>${str}</a>`;
 };
 
+//used in parseLinksandHastags
 const addAnchorToTwitterHashtag = function (str) {
   return `<a href='https://twitter.com/hashtag/${str.slice(1)}'>${str}</a>`;
 };
 
+//used in parseInstagramTags
 const addAnchorToInstagramHashTag = function (str) {
   return `<a href='https://instagram.com/explore/tags/${str.slice(1)}'>${str}</a>`;
 };
 
-
+//used in createTwitterPost
 const parseLinksAndHashTags = function(tweet) {
   const linkReg = /(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?/ig;
   const atMentionReg = /\B\@([\w\-]+)/gim;
@@ -63,6 +149,7 @@ const parseInstagramTags = function (str) {
 
 const createManualPost = function (postData) {
   const divHtml = ` <div class='post manual-post'>
+    <i class="badge fa fa-square" aria-hidden="true"></i>
 <img src='${postData.image_url}' />
     <div class='content'>
     <div class='text'><span>${postData.text}</span></div>
@@ -78,6 +165,7 @@ const createTwitterPost = function (postData) {
   const tweet = parseLinksAndHashTags(postData.tweet);
 
   const divHtml = ` <div class='post twitter-post'>
+    <i class="badge fa fa-twitter-square" aria-hidden="true"></i>
     <div class='username'><h3>${postData.user.username}</h3></div>
     <div class='content'>
     <div class='tweet'><span>${tweet}</span></div>
@@ -92,7 +180,9 @@ const createInstagramPost = function (postData) {
   const caption =  parseInstagramTags(postData.caption);
 
   const divHtml = ` <div class='post instagram-post'>
-    <div class='image'><img src='${postData.image.medium}' /></div>
+    <i class="badge fa fa-instagram" aria-hidden="true"></i>
+    <div class='image'>
+<img src='${postData.image.medium}' /></div>
     <div class='content'>
     <div class='caption'><span>${caption}</span></div>
     </div>
@@ -127,7 +217,7 @@ const toggleFilter = function (id, isActive) {
 
 
 
-  
+
   const classes = ['manual', 'twitter', 'instagram'];
 
   //splice out the class we will show
@@ -169,54 +259,9 @@ const removeOtherActiveClasses = function (id) {
  */
 
 $(function() {
-  loadPosts()
-    .then(function(data) {
-      $.each(data.items, function(key, val){
-        let post = createFromServiceName(val.service_name, val.item_data);
-        $(post).appendTo('#posts');
-      });
-
-      //add property to all links so they open in new window
-      $('a').each(function() {
-        var a = new RegExp('/' + window.location.host + '/');
-        if(!a.test(this.href)) {
-          $(this).click(function(event) {
-            event.preventDefault();
-            event.stopPropagation();
-            window.open(this.href, '_blank');
-          });
-        }
-      });
-
-      $('.hamburger').on('click', function(e){
-        e.preventDefault();
-        e.stopPropagation();
-        $('.filter').toggle();
-      });
-
-      //add click handlers to our filter
-      $('.filter li').each(function() {
-        $(this).on('click',
-          function() {
-            //get the name of posts we want to show
-            //id is filter-manual filter-twitter etc.
-            //so we only want the second word
-            let id = $(this).attr('id').split('-')[1];
-
-            //now we check if the filter is already active
-            //and pass that to our filter function
-            let isActive = $(this).hasClass('active');
-
-            //remove all other active classes
-            removeOtherActiveClasses(id);
-
-            //toggle the class
-            $(this).toggleClass('active');
-
-            //then we filter the posts
-            toggleFilter(id, isActive);
-          });
-      });
-    });
+  loadAndAttachPosts()
+  .then(addClickHandlers)
+  .then(linksInNewWindow)
+  .catch(console.error);
 });
 
